@@ -1,11 +1,18 @@
-import requests
+import re
+from shutil import copyfile
+from sys import exit
+
+
 import semver
+import requests
 from requests.exceptions import HTTPError
 
 
 ALL_STACK_INFO = 'https://app.bitrise.io/app/6c06d3a40422d10f/all_stack_info'
 SYSTEM_REPORTS = 'https://github.com/bitrise-io/bitrise.io/tree/master/system_reports'
 pattern = 'osx-xcode-'
+INFILE = 'bitrise.yml'
+OUTFILE = 'out.yml'
 
 # jq ' . | keys'
 #[
@@ -41,6 +48,24 @@ def largest_version(resp):
     #return largest
 
 
+def write_semvar(new_semvar):
+
+    try:
+	copyfile(INFILE, OUTFILE)
+    except IOError as e:
+	print("Unable to copy file. %s" % e)
+	exit(1)
+    except:
+	print("Unexpected error:", sys.exc_info())
+	exit(1)
+
+    with open(OUTFILE, 'r+') as f:
+	text = f.read()
+	text = re.sub('{XCODE_VERSION}', new_semvar, text)
+	f.seek(0)
+	f.write(text)
+	f.truncate()
+
 try:
     resp = requests.get(ALL_STACK_INFO)
     resp.raise_for_status()
@@ -52,7 +77,8 @@ except HTTPError as http_error:
 except Exception as err:
     print('An exception has occurred: {err}')
 
-l = largest_version(r)
-print(l)
+largest_semvar = largest_version(r)
+write_semvar(largest_semvar)
+
 
 
