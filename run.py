@@ -37,7 +37,8 @@ def largest_version(resp):
                 if count == 0 or semver.compare(largest, p) == -1:
                     largest = p 
                 count += 1
-    return largest
+    return '{0}.x'.format(largest.split('.0')[0])
+    #return largest
 
 
 try:
