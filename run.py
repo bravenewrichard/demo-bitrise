@@ -80,13 +80,8 @@ def semver_prev():
 
 def semver_prev_write(new_semver):
     with open(SEMVER_PREV, 'w+') as f:
-        semver_prev = f.read()
-        print('the prev semver is: {0}'.format(semver_prev))
-        text = re.sub('{XCODE_VERSION}', new_semver, text)
-        f.seek(0)
-        f.write(text)
+        f.write(new_semver)
         f.truncate()
-
     
 try:
     resp = requests.get(ALL_STACK_INFO)
