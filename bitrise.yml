@@ -14,7 +14,7 @@ workflows:
         run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
     - git-clone@4: {}
     - script@1:
-        title: Do anything with Script step
+        title: Build firefox-ios 
         inputs:
         - content: |
             #!/usr/bin/env bash
@@ -23,35 +23,11 @@ workflows:
             # debug log
             set -x
 
-            # write your script here
-            echo "YadaWorld!"
-            echo "Yoohoo Aaron!"
+            echo "================================"
+            echo "PREV_XCODE_VER: $PREV_XCODE_VER"
+            echo "================================"
+            echo
 
-            # or run a script from your repository, like:
-            bash ./run.sh
+            bash ./bootstrap.sh
+            npm run build
     - deploy-to-bitrise-io@1: {}
-  new-xcode:
-    steps:
-    - activate-ssh-key@4:
-        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
-    - git-clone@4: {}
-    - script@1:
-        title: Do anything with Script step
-        inputs:
-        - content: |
-            #!/usr/bin/env bash
-            # fail if any commands fails
-            set -e
-            # debug log
-            set -x
-
-            # write your script here
-            echo "Goodbye World!"
-            echo "Hello Richard!"
-
-            # or run a script from your repository, like:
-            bash ./run.sh
-    - deploy-to-bitrise-io@1: {}
-    meta:
-      bitrise.io:
-        stack: osx-xcode-{XCODE_VERSION}

@@ -2,3 +2,4 @@
 venv*/
 *.sw[op]
 *.BAK
+out.yml

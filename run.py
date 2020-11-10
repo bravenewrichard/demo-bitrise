@@ -1,3 +1,4 @@
+import os
 import re
 from shutil import copyfile
 from sys import exit
@@ -8,18 +9,20 @@ import requests
 from requests.exceptions import HTTPError
 
 
+PREV_XCODE_ENV = os.getenv['PREV_XCODE_ENV', '0.0.0']
 ALL_STACK_INFO = 'https://app.bitrise.io/app/6c06d3a40422d10f/all_stack_info'
-SYSTEM_REPORTS = 'https://github.com/bitrise-io/bitrise.io/tree/master/system_reports'
 pattern = 'osx-xcode-'
 INFILE = 'bitrise.yml'
 OUTFILE = 'out.yml'
 
-# jq ' . | keys'
-#[
-#  "available_stacks",
-#  "project_types_with_default_stacks",
-#  "running_builds_on_private_cloud"
-#]
+"""
+ jq ' . | keys'
+[
+  "available_stacks",
+  "project_types_with_default_stacks",
+  "running_builds_on_private_cloud"
+]
+"""
 
 resp = requests.get(ALL_STACK_INFO)
 resp.raise_for_status()
@@ -38,6 +41,7 @@ def parse_semver(raw_str):
 def largest_version(resp):
     count = 0
     for item in resp:
+        print(item)
         if pattern in item:
             p = parse_semver(item)
             if p:
@@ -51,20 +55,20 @@ def largest_version(resp):
 def write_semvar(new_semvar):
 
     try:
-	copyfile(INFILE, OUTFILE)
+        copyfile(INFILE, OUTFILE)
     except IOError as e:
-	print("Unable to copy file. %s" % e)
-	exit(1)
+        print("Unable to copy file. %s" % e)
+        exit(1)
     except:
-	print("Unexpected error:", sys.exc_info())
-	exit(1)
+        print("Unexpected error:", sys.exc_info())
+        exit(1)
 
     with open(OUTFILE, 'r+') as f:
-	text = f.read()
-	text = re.sub('{XCODE_VERSION}', new_semvar, text)
-	f.seek(0)
-	f.write(text)
-	f.truncate()
+        text = f.read()
+        text = re.sub('{XCODE_VERSION}', new_semvar, text)
+        f.seek(0)
+        f.write(text)
+        f.truncate()
 
 try:
     resp = requests.get(ALL_STACK_INFO)
@@ -78,7 +82,8 @@ except Exception as err:
     print('An exception has occurred: {err}')
 
 largest_semvar = largest_version(r)
-write_semvar(largest_semvar)
-
+print(largest_semvar)
+#write_semvar(largest_semvar)
+print('PREV_XCODE_VER: {0}'.foramt(PREV_XCODE_VER))
 
 
