@@ -9,7 +9,7 @@ import requests
 from requests.exceptions import HTTPError
 
 
-PREV_XCODE_ENV = os.getenv['PREV_XCODE_ENV', '0.0.0']
+PREV_XCODE_ENV = os.environ.get('PREV_XCODE_ENV')
 ALL_STACK_INFO = 'https://app.bitrise.io/app/6c06d3a40422d10f/all_stack_info'
 pattern = 'osx-xcode-'
 INFILE = 'bitrise.yml'

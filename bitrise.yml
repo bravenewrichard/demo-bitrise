@@ -14,7 +14,7 @@ workflows:
         run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
     - git-clone@4: {}
     - script@1:
-        title: Build firefox-ios 
+        title: Do anything with Script step
         inputs:
         - content: |
             #!/usr/bin/env bash
@@ -23,11 +23,62 @@ workflows:
             # debug log
             set -x
 
-            echo "================================"
-            echo "PREV_XCODE_VER: $PREV_XCODE_VER"
-            echo "================================"
-            echo
+            # write your script here
+            echo "Hello World!"
+            echo "Hello Aaron!"
 
-            bash ./bootstrap.sh
-            npm run build
+            # or run a script from your repository, like:
+            bash ./run.sh
     - deploy-to-bitrise-io@1: {}
+  new-xcode:
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@4: {}
+    - script@1:
+        title: Do anything with Script step
+        inputs:
+        - content: |
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # debug log
+            set -x
+
+            # write your script here
+            echo "Hello World!"
+            echo "Hello Aaron!"
+
+            # or run a script from your repository, like:
+            bash ./run.sh
+    - deploy-to-bitrise-io@1: {}
+    meta:
+      bitrise.io:
+        stack: osx-xcode-9.4.x
+    envs:
+    - opts:
+        is_expand: false
+      PREV_XCODE_VER: 0.0.0
+  demo-py:
+    steps:
+    - git-clone@4: {}
+    - script@1:
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # debug log
+            set -x
+
+            # write your script here
+            echo "PREV_XCODE_VER: $PREV_XCODE_VER"
+
+            python ./run.py
+    meta:
+      bitrise.io:
+        stack: osx-xcode-10.3.x
+    envs:
+    - opts:
+        is_expand: false
+      PREV_XCODE_VER: 6.7.8
