@@ -54,7 +54,7 @@ def largest_version(resp):
     #return largest
 
 
-def write_semvar(new_semvar):
+def write_semver(new_semver):
 
     try:
         copyfile(INFILE, OUTFILE)
@@ -67,22 +67,22 @@ def write_semvar(new_semvar):
 
     with open(OUTFILE, 'r+') as f:
         text = f.read()
-        text = re.sub('{XCODE_VERSION}', new_semvar, text)
+        text = re.sub('{XCODE_VERSION}', new_semver, text)
         f.seek(0)
         f.write(text)
         f.truncate()
 
-def semvar_prev():
-    with open(SEMVAR_PREV, 'r') as f:
+def semver_prev():
+    with open(SEMVER_PREV, 'r') as f:
         val = f.read()
         return val 
 
 
-def semvar_prev_write(new_semvar):
-    with open(SEMVAR_PREV, 'w') as f:
-        semvar_prev = f.read()
-        print('the prev semvar is: {0}'.format(semvar_prev))
-        text = re.sub('{XCODE_VERSION}', new_semvar, text)
+def semver_prev_write(new_semver):
+    with open(SEMVER_PREV, 'w') as f:
+        semver_prev = f.read()
+        print('the prev semver is: {0}'.format(semver_prev))
+        text = re.sub('{XCODE_VERSION}', new_semver, text)
         f.seek(0)
         f.write(text)
         f.truncate()
@@ -99,16 +99,16 @@ except HTTPError as http_error:
 except Exception as err:
     print('An exception has occurred: {err}')
 
-largest_semvar = largest_version(r)
-print(largest_semvar)
-#write_semvar(largest_semvar)
+largest_semver = largest_version(r)
+print(largest_semver)
+#write_semver(largest_semver)
 print('PREV_XCODE_VER: {0}'.format(PREV_XCODE_VER))
-os.environ['PREV_XCODE_VER'] = largest_semvar
+os.environ['PREV_XCODE_VER'] = largest_semver
 
-previous_semvar = semvar_prev()
-if previous_semvar:
-    print('the prev semvar is: {0}'.format(val))
+previous_semver = semver_prev()
+if previous_semver:
+    print('the prev semver is: {0}'.format(val))
 else:
-    semvar_prev_write(largest_semvar)
+    semver_prev_write(largest_semver)
 
 
