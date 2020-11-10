@@ -15,6 +15,7 @@ ALL_STACK_INFO = 'https://app.bitrise.io/app/6c06d3a40422d10f/all_stack_info'
 pattern = 'osx-xcode-'
 INFILE = 'bitrise.yml'
 OUTFILE = 'out.yml'
+SEMVER_PREV = 'SEMVER_PREV'
 
 """
  jq ' . | keys'
@@ -71,6 +72,22 @@ def write_semvar(new_semvar):
         f.write(text)
         f.truncate()
 
+def semvar_prev():
+    with open(SEMVAR_PREV, 'r') as f:
+        val = f.read()
+        return val 
+
+
+def semvar_prev_write(new_semvar):
+    with open(SEMVAR_PREV, 'w') as f:
+        semvar_prev = f.read()
+        print('the prev semvar is: {0}'.format(semvar_prev))
+        text = re.sub('{XCODE_VERSION}', new_semvar, text)
+        f.seek(0)
+        f.write(text)
+        f.truncate()
+
+    
 try:
     resp = requests.get(ALL_STACK_INFO)
     resp.raise_for_status()
@@ -87,5 +104,11 @@ print(largest_semvar)
 #write_semvar(largest_semvar)
 print('PREV_XCODE_VER: {0}'.format(PREV_XCODE_VER))
 os.environ['PREV_XCODE_VER'] = largest_semvar
+
+previous_semvar = semvar_prev()
+if previous_semvar:
+    print('the prev semvar is: {0}'.format(val))
+else:
+    semvar_prev_write(largest_semvar)
 
 
