@@ -79,7 +79,7 @@ def semver_prev():
 
 
 def semver_prev_write(new_semver):
-    with open(SEMVER_PREV, 'w') as f:
+    with open(SEMVER_PREV, 'w+') as f:
         semver_prev = f.read()
         print('the prev semver is: {0}'.format(semver_prev))
         text = re.sub('{XCODE_VERSION}', new_semver, text)
@@ -105,7 +105,8 @@ print(largest_semver)
 print('PREV_XCODE_VER: {0}'.format(PREV_XCODE_VER))
 os.environ['PREV_XCODE_VER'] = largest_semver
 
-previous_semver = semver_prev()
+#previous_semver = semver_prev()
+previous_semver = ''
 if previous_semver:
     print('the prev semver is: {0}'.format(val))
 else:
