@@ -84,6 +84,6 @@ except Exception as err:
 largest_semvar = largest_version(r)
 print(largest_semvar)
 #write_semvar(largest_semvar)
-print('PREV_XCODE_VER: {0}'.foramt(PREV_XCODE_VER))
+print('PREV_XCODE_VER: {0}'.format(PREV_XCODE_VER))
 
 
