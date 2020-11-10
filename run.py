@@ -95,8 +95,8 @@ except Exception as err:
     print('An exception has occurred: {err}')
 
 largest_semver = largest_version(r)
-print(largest_semver)
-#write_semver(largest_semver)
+write_semver(largest_semver)
+write_semver('9.3.8')
 print('PREV_XCODE_VER: {0}'.format(PREV_XCODE_VER))
 os.environ['PREV_XCODE_VER'] = largest_semver
 
