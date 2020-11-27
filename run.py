@@ -102,7 +102,7 @@ os.environ['PREV_XCODE_VER'] = largest_semver
 
 previous_semver = semver_prev()
 if previous_semver:
-    print('the prev semver is: {0}'.format(val))
+    print('the prev semver is: {0}'.format(previous_semver))
 else:
     semver_prev_write(largest_semver)
 
