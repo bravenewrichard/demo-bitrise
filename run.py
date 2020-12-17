@@ -8,6 +8,15 @@ import semver
 import requests
 from requests.exceptions import HTTPError
 
+""" STEPS
+1. check all stack info for latest XCode version
+2. compare latest with cached version
+3. if greater, continue...
+4. bitrise update
+5. modify bitrise.yml (update stack value)
+6. bitrise run primary
+"""
+
 
 PREV_XCODE_VER = os.environ.get('PREV_XCODE_VER', '0.0.0')
 

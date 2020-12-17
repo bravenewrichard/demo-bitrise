@@ -13,55 +13,48 @@ workflows:
     - activate-ssh-key@4:
         run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
     - git-clone@4: {}
-    - script@1:
-        title: Do anything with Script step
+    - cache-pull@2:
+        is_always_run: true
         inputs:
-        - content: |
-            #!/usr/bin/env bash
-            # fail if any commands fails
-            set -e
-            # debug log
-            set -x
-
-            # write your script here
-            echo "Hello World!"
-            echo "Hello Aaron!"
-
-            # or run a script from your repository, like:
-            bash ./run.sh
-    - deploy-to-bitrise-io@1: {}
-  new-xcode:
-    steps:
-    - activate-ssh-key@4:
-        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
-    - git-clone@4: {}
+        - is_debug_mode: 'true'
     - script@1:
-        title: Do anything with Script step
+        title: Check if XCode version changed
         inputs:
-        - content: |
+        - content: |+
             #!/usr/bin/env bash
-            # fail if any commands fails
-            set -e
-            # debug log
-            set -x
+            set -ex
+            set +x
 
-            # write your script here
-            echo "Hello World!"
-            echo "Hello Aaron!"
+            echo "================"
+            echo "XCODEBUILD VERSION"
+            echo "================"
 
-            # or run a script from your repository, like:
-            bash ./run.sh
-    - deploy-to-bitrise-io@1: {}
-    meta:
-      bitrise.io:
-        stack: osx-xcode-9.4.x
-    envs:
-    - opts:
-        is_expand: false
-      PREV_XCODE_VER: 0.0.0
-  demo-py:
-    steps:
-    - git-clone@4: {}
+            xcodebuild -version
+            echo "================"
+            echo "FILE: SEMVER_PREV"
+            echo "================"
+            cat SEMVER_PREV
+
+            echo "ADDING ENV VAR"
+            envman add --key SEMVER_PREV --valuefile SEMVER_PREV
+            echo $SEMVER_PREV
+
+            envman add --key SEMVER --value "osx-xcode-11.2.x"
+
+
+        is_always_run: true
+    - script@1:
+        title: Get latest XCode version
+        inputs:
+        - content: "#!/usr/bin/env bash\n# fail if any commands fails\nset -e\n# debug
+            log\nset +x\necho \"=======================\"\necho \"READING ENV VAR\"\necho
+            \"=======================\"\necho \necho \"CONTENTS of SEMVER_PREV ENV
+            VAR....\"\necho\necho $SEMVER_PREV\n\n\ncurl https://bootstrap.pypa.io/3.2/get-pip.py
+            -o python3.2\npip3 install -r ./requirements.txt\npython3 ./run.py\n\n\necho
+            \"=======================\"\necho \"SEMVER_PREV WRITTEN BY: run.py\"\necho
+            \"=======================\"\necho \necho \"CONTENTS of SEMVER_PREV FILE....\"\necho\ncat
+            ./SEMVER_PREV\necho \necho \"A.B.C\" > SEMVER_PREV\n\n\n\n\n"
+        is_always_run: true
     - script@1:
         inputs:
         - content: |-
@@ -70,15 +63,13 @@ workflows:
             set -e
             # debug log
             set -x
-
-            # write your script here
-            echo "PREV_XCODE_VER: $PREV_XCODE_VER"
-
-            python ./run.py
+        title: Build firefox-iOS
+    - cache-push@2:
+        inputs:
+        - is_debug_mode: 'true'
+        - cache_paths: "SEMVER_PREV\n\n"
+    - deploy-to-bitrise-io@1: {}
     meta:
       bitrise.io:
-        stack: osx-xcode-10.3.x
-    envs:
-    - opts:
-        is_expand: false
-      PREV_XCODE_VER: 6.7.8
+        stack: osx-xcode-11.3.x 
+
