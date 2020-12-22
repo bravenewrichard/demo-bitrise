@@ -1,9 +1,8 @@
 name: github actions Demo
 
 on: 
-  push:
-    branches: master
-    paths-ignore: bitrise.yml
+  schedule:
+    - cron: "30 4 * * *"
 
 jobs:
   build:
